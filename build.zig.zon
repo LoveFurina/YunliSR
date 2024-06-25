@@ -1,0 +1,15 @@
+.{
+    .name = "YunliSR",
+    .version = "0.0.1",
+    .minimum_zig_version = "0.13.0",
+    .dependencies = .{
+        .dispatch = .{ .path = "dispatch" },
+        .gameserver = .{ .path = "gameserver" },
+        .protocol = .{ .path = "protocol" },
+        .protobuf = .{
+            .url = "https://github.com/Arwalk/zig-protobuf/archive/7c49ed66e029c9c7e6253b3d6d256118745550a4.tar.gz",
+            .hash = "122063ee7ff32a3c1aefd91a46a9fc23df0571949c3a02e2f44d39afbad0b53018a3",
+        },
+    },
+    .paths = .{""},
+}

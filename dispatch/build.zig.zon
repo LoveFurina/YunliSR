@@ -1,0 +1,28 @@
+.{
+    .name = "dispatch",
+    .version = "0.0.1",
+    .minimum_zig_version = "0.13.0",
+
+    // This field is optional.
+    // Each dependency must either provide a `url` and `hash`, or a `path`.
+    // `zig build --fetch` can be used to fetch all dependencies of a package, recursively.
+    // Once all dependencies are fetched, `zig build` no longer requires
+    // internet connectivity.
+    .dependencies = .{
+        .httpz = .{
+            .url = "https://github.com/karlseguin/http.zig/archive/406fb00f8c43fe9b2da0f32f428675755c67d054.tar.gz",
+            .hash = "12209e87663712928c6ae1c690e65df15a796e970e5d18f5e4e05f0eb10404883d23",
+        },
+        .protocol = .{
+            .path = "../protocol",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+        // For example...
+        //"LICENSE",
+        //"README.md",
+    },
+}
