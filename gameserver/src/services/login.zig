@@ -20,7 +20,7 @@ pub fn onPlayerLogin(session: *Session, packet: *const Packet, allocator: Alloca
     var basic_info = protocol.PlayerBasicInfo.init(allocator);
     basic_info.stamina = 240;
     basic_info.level = 5;
-    basic_info.nickname = .{ .Const = "xeondev" };
+    basic_info.nickname = .{ .Const = "LoveFurina" };
 
     var rsp = protocol.PlayerLoginScRsp.init(allocator);
     rsp.retcode = 0;

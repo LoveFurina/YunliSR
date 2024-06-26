@@ -10,7 +10,7 @@ pub fn onShieldLogin(_: *httpz.Request, res: *httpz.Response) !void {
         .data = .{
             .account = .{
                 .area_code = "**",
-                .email = "reversedrooms@xeondev.com",
+                .email = "LoveFurina",
                 .country = "RU",
                 .is_email_verify = "1",
                 .token = "mostsecuretokenever",

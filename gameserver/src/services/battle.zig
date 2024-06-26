@@ -10,8 +10,8 @@ pub fn onStartCocoonStage(session: *Session, packet: *const Packet, allocator: A
 
     var avatar = protocol.BattleAvatar.init(allocator);
     avatar.id = 1221;
-    avatar.hp = 10000;
-    avatar.sp = .{ .sp_cur = 10000, .sp_need = 10000 };
+    avatar.hp = 20000;
+    avatar.sp = .{ .sp_cur = 20000, .sp_need = 20000 };
     avatar.level = 80;
     avatar.rank = 6;
     avatar.promotion = 6;

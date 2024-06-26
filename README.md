@@ -1,6 +1,6 @@
 # YunliSR
-#### An experimental Honkai: Star Rail 2.3.51 server emulator written in Zig.
-![screenshot](https://git.xeondev.com/reversedrooms/YunliSR/raw/branch/master/screenshot.png)
+#### An experimental turn-based animegame server emulator written in Zig.
+2.3.52
 
 # Who?
 Yunli
@@ -34,9 +34,8 @@ Navigate to the [Releases](https://git.xeondev.com/reversedrooms/YunliSR/release
 page and download the latest release for your platform.
 
 ## Connecting
-[Get 2.4 beta client](https://autopatchos.starrails.com/client/Beta/20240614195024_Wa3GBOJIRMB94tXB/StarRail_2.3.51.zip),
-replace [mhypbase.dll](https://git.xeondev.com/reversedrooms/YunliSR/raw/branch/master/mhypbase.dll)
-file in your game folder, it will redirect game traffic (and disable in-game censorship)
+
+
 
 ## Functionality (work in progress)
 - Login and player spawn
