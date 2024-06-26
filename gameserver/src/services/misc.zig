@@ -18,7 +18,7 @@ pub fn onPlayerHeartBeat(session: *Session, packet: *const Packet, allocator: Al
     const rsp = protocol.PlayerHeartBeatScRsp{
         .retcode = 0,
         .client_time_ms = req.client_time_ms,
-        .server_time_ms = @intCast(std.time.timestamp()),
+        .server_time_ms = @intCast(std.time.milliTimestamp()),
         .download_data = data,
     };
 
