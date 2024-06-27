@@ -27,7 +27,8 @@ jobs:
       - uses: goto-bus-stop/setup-zig@v2
         with:
           version: 0.13.0
-      - run: |
+      - name: 编译
+        run: |
            zig build
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4.3.1
