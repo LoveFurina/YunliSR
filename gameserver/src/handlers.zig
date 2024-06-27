@@ -14,12 +14,15 @@ const Allocator = std.mem.Allocator;
 const ArenaAllocator = std.heap.ArenaAllocator;
 const CmdID = protocol.CmdID;
 
+const log = std.log.scoped(.handlers);
+
 const Action = *const fn (*Session, *const Packet, Allocator) anyerror!void;
 const HandlerList = [_]struct { CmdID, Action }{
     .{ CmdID.CmdPlayerGetTokenCsReq, login.onPlayerGetToken },
     .{ CmdID.CmdPlayerLoginCsReq, login.onPlayerLogin },
     .{ CmdID.CmdPlayerHeartBeatCsReq, misc.onPlayerHeartBeat },
     .{ CmdID.CmdGetAvatarDataCsReq, avatar.onGetAvatarData },
+    .{ CmdID.CmdGetMultiPathAvatarInfoCsReq, avatar.onGetMultiAvatarData },
     .{ CmdID.CmdGetMissionStatusCsReq, mission.onGetMissionStatus },
     .{ CmdID.CmdGetCurLineupDataCsReq, lineup.onGetCurLineupData },
     .{ CmdID.CmdGetCurSceneInfoCsReq, scene.onGetCurSceneInfo },
@@ -68,6 +71,8 @@ const DummyCmdList = [_]struct { CmdID, CmdID }{
     .{ CmdID.CmdGetMainMissionCustomValueCsReq, CmdID.CmdGetMainMissionCustomValueScRsp },
 };
 
+const SuppressLogList = [_]CmdID{CmdID.CmdSceneEntityMoveCsReq};
+
 pub fn handle(session: *Session, packet: *const Packet) !void {
     var arena = ArenaAllocator.init(session.allocator);
     defer arena.deinit();
@@ -77,7 +82,9 @@ pub fn handle(session: *Session, packet: *const Packet) !void {
     inline for (HandlerList) |handler| {
         if (handler[0] == cmd_id) {
             try handler[1](session, packet, arena.allocator());
-            std.log.debug("packet {} was handled", .{cmd_id});
+            if (!std.mem.containsAtLeast(CmdID, &SuppressLogList, 1, &[_]CmdID{cmd_id})) {
+                log.debug("packet {} was handled", .{cmd_id});
+            }
             return;
         }
     }
@@ -89,5 +96,5 @@ pub fn handle(session: *Session, packet: *const Packet) !void {
         }
     }
 
-    std.log.warn("packet {} was ignored", .{cmd_id});
+    log.warn("packet {} was ignored", .{cmd_id});
 }
