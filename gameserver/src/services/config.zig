@@ -1,12 +1,15 @@
 const std = @import("std");
 const Allocator = std.mem.Allocator;
+const ArrayList = std.ArrayList;
 
-const Blessing = struct {
-    id: u32,
-    level: u32,
+const BattleConfig = struct {
+    battle_id: u32,
+    stage_id: u32,
+    cycle_count: u32,
+    monster_wave: ArrayList(ArrayList(u32)),
+    monster_level: u32,
+    blessings: ArrayList(u32),
 };
-
-const BattleConfig = struct { battle_id: u32, stage_id: u32, cycle_count: u32, monster_wave: std.ArrayList(std.ArrayList(u32)), monster_level: u32, blessings: std.ArrayList(Blessing) };
 
 const Lightcone = struct {
     id: u32,
@@ -15,7 +18,7 @@ const Lightcone = struct {
     promotion: u32,
 };
 
-const Relic = struct {
+pub const Relic = struct {
     id: u32,
     level: u32,
     main_affix_id: u32,
@@ -38,13 +41,13 @@ const Avatar = struct {
     promotion: u32,
     rank: u32,
     lightcone: Lightcone,
-    relics: std.ArrayList(Relic),
+    relics: ArrayList(Relic),
     use_technique: bool,
 };
 
 pub const GameConfig = struct {
     battle_config: BattleConfig,
-    avatar_config: std.ArrayList(Avatar),
+    avatar_config: ArrayList(Avatar),
 };
 
 pub fn configLoader(allocator: Allocator, filename: []const u8) !GameConfig {
@@ -73,30 +76,25 @@ fn parseConfig(root: anytype, allocator: Allocator) !GameConfig {
         .battle_id = @intCast(battle_config_json.object.get("battle_id").?.integer),
         .stage_id = @intCast(battle_config_json.object.get("stage_id").?.integer),
         .cycle_count = @intCast(battle_config_json.object.get("cycle_count").?.integer),
-        .monster_wave = std.ArrayList(std.ArrayList(u32)).init(allocator),
+        .monster_wave = ArrayList(ArrayList(u32)).init(allocator),
         .monster_level = @intCast(battle_config_json.object.get("monster_level").?.integer),
-        .blessings = std.ArrayList(Blessing).init(allocator),
+        .blessings = ArrayList(u32).init(allocator),
     };
     std.debug.print("loading config stageID = {}\n", .{battle_config.stage_id});
 
     for (battle_config_json.object.get("monster_wave").?.array.items) |wave| {
-        var wave_list = std.ArrayList(u32).init(allocator);
+        var wave_list = ArrayList(u32).init(allocator);
         for (wave.array.items) |monster| {
             try wave_list.append(@intCast(monster.integer));
         }
         try battle_config.monster_wave.append(wave_list);
     }
 
-    for (battle_config_json.object.get("blessings").?.array.items) |b| {
-        const blessing = Blessing{
-            .id = @intCast(b.object.get("id").?.integer),
-            .level = @intCast(b.object.get("level").?.integer),
-        };
-
-        try battle_config.blessings.append(blessing);
+    for (battle_config_json.object.get("blessings").?.array.items) |blessing| {
+        try battle_config.blessings.append(@intCast(blessing.integer));
     }
 
-    var avatar_config = std.ArrayList(Avatar).init(allocator);
+    var avatar_config = ArrayList(Avatar).init(allocator);
     for (root.object.get("avatar_config").?.array.items) |avatar_json| {
         var avatar = Avatar{
             .id = @intCast(avatar_json.object.get("id").?.integer),
@@ -106,7 +104,7 @@ fn parseConfig(root: anytype, allocator: Allocator) !GameConfig {
             .promotion = @intCast(avatar_json.object.get("promotion").?.integer),
             .rank = @intCast(avatar_json.object.get("rank").?.integer),
             .lightcone = undefined,
-            .relics = std.ArrayList(Relic).init(allocator),
+            .relics = ArrayList(Relic).init(allocator),
             .use_technique = avatar_json.object.get("use_technique").?.bool,
         };
 
@@ -133,7 +131,7 @@ fn parseConfig(root: anytype, allocator: Allocator) !GameConfig {
 }
 
 fn parseRelic(relic_str: []const u8, allocator: Allocator) !Relic {
-    var tokens = std.ArrayList([]const u8).init(allocator);
+    var tokens = ArrayList([]const u8).init(allocator);
     defer tokens.deinit();
 
     var iterator = std.mem.tokenize(u8, relic_str, ",");
@@ -145,6 +143,7 @@ fn parseRelic(relic_str: []const u8, allocator: Allocator) !Relic {
     const tokens_slice = tokens.items;
 
     if (tokens_slice.len < 8) {
+        std.debug.print("relic parsing error: {s}\n", .{relic_str});
         return error.InsufficientTokens;
     }
 

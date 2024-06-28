@@ -4,6 +4,7 @@ const CmdID = protocol.CmdID;
 const Session = @import("../Session.zig");
 const Packet = @import("../Packet.zig");
 const Allocator = std.mem.Allocator;
+const ArrayList = std.ArrayList;
 const Config = @import("config.zig");
 
 pub fn onStartCocoonStage(session: *Session, packet: *const Packet, allocator: Allocator) !void {
@@ -13,18 +14,7 @@ pub fn onStartCocoonStage(session: *Session, packet: *const Packet, allocator: A
 
     var battle = protocol.SceneBattleInfo.init(allocator);
 
-    for (config.battle_config.monster_wave.items) |wave| {
-        var monster_wave = protocol.SceneMonsterWave.init(allocator);
-        for (wave.items) |mob_id| {
-            {
-                const monster = protocol.SceneMonsterInfo{ .monster_id = mob_id };
-                try monster_wave.monster_list.append(monster);
-            }
-            monster_wave.monster_wave_param = protocol.SceneMonsterWaveParam{ .level = config.battle_config.monster_level };
-        }
-        try battle.monster_wave_list.append(monster_wave);
-    }
-
+    // avatar handler
     for (config.avatar_config.items, 0..) |avatarConf, idx| {
         var avatar = protocol.BattleAvatar.init(allocator);
         avatar.id = avatarConf.id;
@@ -40,7 +30,12 @@ pub fn onStartCocoonStage(session: *Session, packet: *const Packet, allocator: A
             try avatar.relic_list.append(r);
         }
         // lc
-        const lc = protocol.BattleEquipment{ .id = avatarConf.lightcone.id, .rank = avatarConf.lightcone.rank, .level = avatarConf.lightcone.level, .promotion = avatarConf.lightcone.promotion };
+        const lc = protocol.BattleEquipment{
+            .id = avatarConf.lightcone.id,
+            .rank = avatarConf.lightcone.rank,
+            .level = avatarConf.lightcone.level,
+            .promotion = avatarConf.lightcone.promotion,
+        };
         try avatar.equipment_list.append(lc);
         // max trace
         const skills = [_]u32{ 1, 2, 3, 4, 7, 101, 102, 103, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210 };
@@ -58,7 +53,7 @@ pub fn onStartCocoonStage(session: *Session, packet: *const Packet, allocator: A
         }
         // enable technique
         if (avatarConf.use_technique) {
-            var targetIndexList = std.ArrayList(u32).init(allocator);
+            var targetIndexList = ArrayList(u32).init(allocator);
             try targetIndexList.append(0);
             var buff = protocol.BattleBuff{
                 .id = 121401,
@@ -66,45 +61,76 @@ pub fn onStartCocoonStage(session: *Session, packet: *const Packet, allocator: A
                 .owner_index = @intCast(idx),
                 .wave_flag = 1,
                 .target_index_list = targetIndexList,
-                .dynamic_values = std.ArrayList(protocol.BattleBuff.DynamicValuesEntry).init(allocator),
+                .dynamic_values = ArrayList(protocol.BattleBuff.DynamicValuesEntry).init(allocator),
             };
-            try buff.dynamic_values.append(protocol.BattleBuff.DynamicValuesEntry{
-                .key = .{ .Const = "SkillIndex" },
-                .value = 0,
-            });
+            try buff.dynamic_values.append(.{ .key = .{ .Const = "SkillIndex" }, .value = 0 });
             try battle.buff_list.append(buff);
         }
         try battle.battle_avatar_list.append(avatar);
     }
 
+    // basic info
     battle.battle_id = config.battle_config.battle_id;
     battle.stage_id = config.battle_config.stage_id;
     battle.logic_random_seed = @intCast(@mod(std.time.timestamp(), 0xFFFFFFFF));
-    battle.HOFFCBLNFNG = config.battle_config.cycle_count;
+    battle.HOFFCBLNFNG = config.battle_config.cycle_count; // cycle
+    battle.BOJHPNCAKOP = @intCast(config.battle_config.monster_wave.items.len); // wave
+
+    // monster handler
+    for (config.battle_config.monster_wave.items) |wave| {
+        var monster_wave = protocol.SceneMonsterWave.init(allocator);
+        monster_wave.monster_wave_param = protocol.SceneMonsterWaveParam{ .level = config.battle_config.monster_level };
+        for (wave.items) |mob_id| {
+            try monster_wave.monster_list.append(.{ .monster_id = mob_id });
+        }
+        try battle.monster_wave_list.append(monster_wave);
+    }
 
     // stage blessings
     for (config.battle_config.blessings.items) |blessing| {
-        var targetIndexList = std.ArrayList(u32).init(allocator);
+        var targetIndexList = ArrayList(u32).init(allocator);
         try targetIndexList.append(0);
         var buff = protocol.BattleBuff{
-            .id = blessing.id,
-            .level = blessing.level,
-            .owner_index = 0,
-            .wave_flag = 1,
+            .id = blessing,
+            .level = 1,
+            .owner_index = 0xffffffff,
+            .wave_flag = 0xffffffff,
             .target_index_list = targetIndexList,
-            .dynamic_values = std.ArrayList(protocol.BattleBuff.DynamicValuesEntry).init(allocator),
+            .dynamic_values = ArrayList(protocol.BattleBuff.DynamicValuesEntry).init(allocator),
         };
-        try buff.dynamic_values.append(protocol.BattleBuff.DynamicValuesEntry{
-            .key = .{ .Const = "SkillIndex" },
-            .value = 0,
-        });
+        try buff.dynamic_values.append(.{ .key = .{ .Const = "SkillIndex" }, .value = 0 });
         try battle.buff_list.append(buff);
     }
 
-    try session.send(CmdID.CmdSetAvatarPathScRsp, protocol.SetAvatarPathScRsp{
-        .retcode = 0,
-        .avatar_id = .Mar_7thRogueType,
-    });
+    // PF/AS scoring
+    const BattleTargetInfo = protocol.SceneBattleInfo.BattleTargetInfo;
+    battle.battle_target_info = ArrayList(BattleTargetInfo).init(allocator);
+
+    // target hardcode
+    var pfTargetHead = protocol.BattleTargetList{ .KNBBHOJNOFF = ArrayList(protocol.BattleTarget).init(allocator) };
+    try pfTargetHead.KNBBHOJNOFF.append(.{ .id = 10002, .progress = 0, .total_progress = 0 });
+    var pfTargetTail = protocol.BattleTargetList{ .KNBBHOJNOFF = ArrayList(protocol.BattleTarget).init(allocator) };
+    try pfTargetTail.KNBBHOJNOFF.append(.{ .id = 2001, .progress = 0, .total_progress = 0 });
+    try pfTargetTail.KNBBHOJNOFF.append(.{ .id = 2002, .progress = 0, .total_progress = 0 });
+    var asTargetHead = protocol.BattleTargetList{ .KNBBHOJNOFF = ArrayList(protocol.BattleTarget).init(allocator) };
+    try asTargetHead.KNBBHOJNOFF.append(.{ .id = 90005, .progress = 0, .total_progress = 0 });
+
+    switch (battle.stage_id) {
+        // PF
+        30019000...30019100, 30021000...30021100, 30301000...30307000 => {
+            try battle.battle_target_info.append(.{ .key = 1, .value = pfTargetHead });
+            // fill blank target
+            for (2..5) |i| {
+                try battle.battle_target_info.append(.{ .key = @intCast(i) });
+            }
+            try battle.battle_target_info.append(.{ .key = 5, .value = pfTargetTail });
+        },
+        // AS
+        420100...420200 => {
+            try battle.battle_target_info.append(.{ .key = 1, .value = asTargetHead });
+        },
+        else => {},
+    }
 
     try session.send(CmdID.CmdStartCocoonStageScRsp, protocol.StartCocoonStageScRsp{
         .retcode = 0,
@@ -130,7 +156,7 @@ fn relicCoder(allocator: Allocator, id: u32, level: u32, main_affix_id: u32, sta
         .id = id,
         .main_affix_id = main_affix_id,
         .level = level,
-        .sub_affix_list = std.ArrayList(protocol.RelicAffix).init(allocator),
+        .sub_affix_list = ArrayList(protocol.RelicAffix).init(allocator),
     };
     try relic.sub_affix_list.append(protocol.RelicAffix{ .affix_id = stat1, .cnt = cnt1, .step = 3 });
     try relic.sub_affix_list.append(protocol.RelicAffix{ .affix_id = stat2, .cnt = cnt2, .step = 3 });

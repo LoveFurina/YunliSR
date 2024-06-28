@@ -2,26 +2,18 @@
   "battle_config": {
     "battle_id": 1,
     "stage_id": 30305041,
-    "cycle_count": 30,
+    "cycle_count": 4,
     "monster_wave": [
       [
-        8003030,
-        3003050
-      ],
-      [
-        3024010
+        2012010,
+        3003020,
+        2013020
       ]
     ],
     "monster_level": 85,
     "blessings": [
-      {
-        "id": 3031004,
-        "level": 1
-      },
-      {
-        "id": 3031320,
-        "level": 1
-      }
+      3031004,
+      3031320
     ]
   },
   "avatar_config": [
@@ -31,8 +23,8 @@
       "hp": 100,
       "sp": 50,
       "level": 80,
-      "promotion": 2,
-      "rank": 2,
+      "promotion": 6,
+      "rank": 0,
       "lightcone": {
         "id": 23030,
         "rank": 1,
@@ -56,7 +48,7 @@
       "sp": 50,
       "level": 80,
       "promotion": 6,
-      "rank": 2,
+      "rank": 0,
       "lightcone": {
         "id": 23021,
         "rank": 1,

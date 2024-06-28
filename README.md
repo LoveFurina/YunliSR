@@ -1,12 +1,11 @@
 # YunliSR
 #### An experimental turn-based animegame server emulator written in Zig.
 
-基于 [Xeon的项目](https://git.xeondev.com/reversedrooms/YunliSR) 微调而来
+基于 [Xeon的项目](https://git.xeondev.com/reversedrooms/YunliSR) 和其频道内的Popura大佬的修改微调而来，仅做存档
 ## JSON如何配置和修改?
 ![image](https://github.com/LoveFurina/YunliSR/blob/master/json_guide.png)
 
-### 这个功能是你写的吗?
-不，我最近没空，这是Discord上一个叫Popura的人写的
+
 
 ## 我想用52或更新版本进游戏，该怎么做？
 `dispatch.zig`里有`lua_version` `lua_url` `asset_bundle_url` `ex_resource_url`这几个字段，修改链接为对应的版本即可。`ifix_version` 始终为零
@@ -44,14 +43,15 @@ zig build run-dispatch & zig build run-gameserver
 
 ### 使用预构建的二进制文件
 导航到 [Actions](https://github.com/LoveFurina/YunliSR/actions)
-页面并下载适合您平台的最新版本。可能需要登录账号才能看到。把上方区域的`config.json`文件下载下来并放到EXE同目录下
+页面并下载适合您平台的最新版本。可能需要登录账号才能看到。把上方区域的`config.json`文件下载下来并放到EXE同目录下，可以自己修改配置和阵容
 ## 连接
 
-如果使用OS51包，使用...即可
+如果使用OS51包，使用Xeon的patch即可，如果是52及更新版本或CN包，就要使用代理(Proxy)进行转向且不能替换文件
 
 ## 功能（WIP）
 - 登录和玩家生成
 - 通过花萼进行战斗测试
+- 遗器/光锥可在战斗之外查看
 
 ## Contributing
 

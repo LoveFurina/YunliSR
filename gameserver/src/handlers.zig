@@ -3,6 +3,7 @@ const protocol = @import("protocol");
 const Session = @import("Session.zig");
 const Packet = @import("Packet.zig");
 const avatar = @import("services/avatar.zig");
+const item = @import("services/item.zig");
 const battle = @import("services/battle.zig");
 const login = @import("services/login.zig");
 const lineup = @import("services/lineup.zig");
@@ -22,7 +23,9 @@ const HandlerList = [_]struct { CmdID, Action }{
     .{ CmdID.CmdPlayerLoginCsReq, login.onPlayerLogin },
     .{ CmdID.CmdPlayerHeartBeatCsReq, misc.onPlayerHeartBeat },
     .{ CmdID.CmdGetAvatarDataCsReq, avatar.onGetAvatarData },
-    .{ CmdID.CmdGetMultiPathAvatarInfoCsReq, avatar.onGetMultiAvatarData },
+    .{ CmdID.CmdGetMultiPathAvatarInfoCsReq, avatar.onGetMultiPathAvatarInfo },
+    .{ CmdID.CmdGetBagCsReq, item.onGetBag },
+    .{ CmdID.CmdChangeLineupLeaderCsReq, lineup.onChangeLineupLeader },
     .{ CmdID.CmdGetMissionStatusCsReq, mission.onGetMissionStatus },
     .{ CmdID.CmdGetCurLineupDataCsReq, lineup.onGetCurLineupData },
     .{ CmdID.CmdGetCurSceneInfoCsReq, scene.onGetCurSceneInfo },
@@ -69,6 +72,7 @@ const DummyCmdList = [_]struct { CmdID, CmdID }{
     .{ CmdID.CmdPlayerLoginFinishCsReq, CmdID.CmdPlayerLoginFinishScRsp },
     .{ CmdID.CmdGetLevelRewardTakenListCsReq, CmdID.CmdGetLevelRewardTakenListScRsp },
     .{ CmdID.CmdGetMainMissionCustomValueCsReq, CmdID.CmdGetMainMissionCustomValueScRsp },
+    .{ CmdID.CmdRelicRecommendCsReq, CmdID.CmdRelicRecommendScRsp },
 };
 
 const SuppressLogList = [_]CmdID{CmdID.CmdSceneEntityMoveCsReq};

@@ -12,11 +12,18 @@ pub fn onGetCurLineupData(session: *Session, _: *const Packet, allocator: Alloca
     var lineup = protocol.LineupInfo.init(allocator);
     lineup.HPMGGECENEM = 5;
     lineup.HGBHBGMMOKG = 5;
-    lineup.name = .{ .Const = "Squad 1" };
+    lineup.name = .{ .Const = "YunliSR" };
 
     for (config.avatar_config.items, 0..) |avatarConf, idx| {
         var avatar = protocol.LineupAvatar.init(allocator);
-        avatar.id = avatarConf.id;
+        switch (avatarConf.id) {
+            8001, 8002, 8003, 8004, 8005, 8006 => {
+                avatar.id = avatarConf.id; // remap MC for initial lineup
+            },
+            else => {
+                avatar.id = avatarConf.id;
+            },
+        }
         avatar.slot = @intCast(idx);
         avatar.satiety = 0;
         avatar.hp = avatarConf.hp * 100;
