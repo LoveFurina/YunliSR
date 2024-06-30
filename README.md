@@ -3,6 +3,9 @@
 
 基于 [Xeon的项目](https://git.xeondev.com/reversedrooms/YunliSR) 和其频道内的Popura大佬的修改微调而来，仅做存档
 ## JSON如何配置和修改?
+- 新方法：https://srtools.pages.dev/ ,网站里数据配置完后点击右上角`config.json`即可下载配置好的文件（不要开网页翻译）
+- 原方法：
+
 ![image](https://github.com/LoveFurina/YunliSR/blob/master/json_guide.png)
 
 
