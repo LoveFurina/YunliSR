@@ -2,7 +2,7 @@
 #### An experimental turn-based animegame server emulator written in Zig.
 
 基于 [Xeon的项目](https://git.xeondev.com/reversedrooms/YunliSR) 和其频道内的Popura大佬的修改微调而来，仅做存档
-# 支持CN/OS 53
+# 支持CN/OS 54
 ## JSON如何配置和修改?
 - 新方法：https://srtools.pages.dev/ ,网站里数据配置完后点击右上角`config.json`即可下载配置好的文件（不要开网页翻译）
 - 原方法：

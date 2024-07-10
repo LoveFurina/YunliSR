@@ -34,11 +34,11 @@ pub fn onQueryGateway(_: *httpz.Request, res: *httpz.Response) !void {
     proto.use_tcp = true;
     proto.port = 23301;
     proto.ip = .{ .Const = "127.0.0.1" };
-    proto.lua_version = .{ .Const = "7435198" };
+    proto.lua_version = .{ .Const = "7488079" };
     proto.ifix_version = .{ .Const = "0" };
-    proto.lua_url = .{ .Const = "https://autopatchos.starrails.com/lua/BetaLive/output_7435198_cb6c7842da93" };
-    proto.asset_bundle_url = .{ .Const = "https://autopatchos.starrails.com/asb/BetaLive/output_7435461_8cd43ab19921" };
-    proto.ex_resource_url = .{ .Const = "https://autopatchos.starrails.com/design_data/BetaLive/output_7441503_fe09f8b8ab97" };
+    proto.lua_url = .{ .Const = "https://autopatchos.starrails.com/lua/BetaLive/output_7488079_6bc8bfcb7d05" };
+    proto.asset_bundle_url = .{ .Const = "https://autopatchos.starrails.com/asb/BetaLive/output_7487689_62686ba327cf" };
+    proto.ex_resource_url = .{ .Const = "https://autopatchos.starrails.com/design_data/BetaLive/output_7489291_74c449a9d17d" };
     proto.MCANJEHAEKO = true;
     proto.PGMFEHFKLBG = true;
     proto.NNPPEAAIHAK = true;
